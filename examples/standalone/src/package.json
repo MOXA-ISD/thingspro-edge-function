@@ -1,0 +1,23 @@
+{
+    "name":"thingspro-demo",
+    "enabled":true,
+    "trigger":{
+        "driven":"timeDriven",
+        "dataDriven":{
+            "tags":{},
+            "events":{}
+        },
+        "timeDriven":{
+            "mode":"boot",
+            "intervalSec":1,
+            "cronJob":""
+        }
+    },
+    "expose":{
+        "tags":[]
+    },
+    "executable": {
+        "language": "python"
+    },
+    "params":{}
+}

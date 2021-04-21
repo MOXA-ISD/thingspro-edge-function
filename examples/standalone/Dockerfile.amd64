@@ -1,0 +1,13 @@
+FROM python:3.6-buster as builder
+
+WORKDIR /app
+
+COPY src/ .
+
+RUN python3 -m pip install tpfunc
+
+FROM scratch
+
+COPY --from=builder / /
+
+CMD [ "/usr/local/bin/python3", "/app/index.py" ]

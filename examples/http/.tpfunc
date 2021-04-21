@@ -1,0 +1,5 @@
+[init]
+ipaddr = "10.123.23.31"
+username = "moxa"
+password = "moxa"
+mx-api-token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MCwiVXNlcm5hbWUiOiJhZG1pbiIsIlBlcm1pc3Npb25zIjpbIlNZU19NWEFQSV9UT0tFTiJdLCJleHAiOjQ3NzIwODMyODF9.jltWIjGL33u6BzdPMpBVIhGLNZP92nPY3dRsiCrgEo4"
