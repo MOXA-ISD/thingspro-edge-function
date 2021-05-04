@@ -36,7 +36,6 @@ function is_configured(): boolean {
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
-
 	outputChannel = vscode.window.createOutputChannel(`ThingsPro Edge Function output`);
     outputChannel.show(true);
 
@@ -54,7 +53,6 @@ export async function activate(context: vscode.ExtensionContext) {
 		password = Buffer.from(mgr.get_value('password'), 'base64').toString()
 		ipAddr = mgr.get_value('ipaddr')
 		token = Buffer.from(mgr.get_value('token'), 'base64').toString()
-		console.log(token)
 		if (is_configured()) {
 			showMessage(MsgLevel.Info, "Previous Configuration Loaded")
 		}
@@ -152,7 +150,7 @@ export async function addConfiguration() {
 			}
 			mgr.set_value('ipaddr', ipAddr)
 			mgr.set_value('username', username)
-			mgr.set_value('password', Buffer.from(token.trim()).toString('base64'))
+			mgr.set_value('password', Buffer.from(password.trim()).toString('base64'))
 			mgr.set_value('token', Buffer.from(token.trim()).toString('base64'))
 			mgr.write_to_file()
 			showMessage(MsgLevel.Info, 'Configuration Updated')
@@ -161,8 +159,12 @@ export async function addConfiguration() {
 	  }).connect({
 		host: ipAddr,
 		username: username,
-		password: password
+		password: password,
+		readyTimeout: 5000,
 	  });
+	conn.on('error', (err: any) => {
+		showMessage(MsgLevel.Error, 'Connect Error: ' + err)
+	});
 }
 
 export async function listFunction() {
@@ -198,8 +200,12 @@ export async function listFunction() {
 	  }).connect({
 		host: ipAddr,
 		username: username,
-		password: password
+		password: password,
+		readyTimeout: 5000,
 	  });
+	conn.on('error', (err: any) => {
+		showMessage(MsgLevel.Error, 'Connect Error: ' + err)
+	});
 }
 
 export async function startLogFunction() {
@@ -218,27 +224,30 @@ export async function startLogFunction() {
 	connPreview = new Client();
 	connPreview.on('ready', () => {
 		connPreview.exec(command, {pty: true}, (err: any, stream: any) => {
-		  if (err) throw err;
-		  stream.on('data', (data: any) => {
-			if (data.includes('[sudo] password for moxa:')) {
-				stream.write(`${password}\n`);
-			} else {
-				outputChannel.append(data.toString())
-			}
-		  })
-		  .stderr.on('data', (data: any) => {
-			console.log('STDERR: ' + data);
-		  });
-		  stream.on('exit', function(code: any, signal: any) {
-			connPreview.end();
-		  });
+			if (err) throw err;
+			stream.on('data', (data: any) => {
+				if (data.includes('[sudo] password for moxa:')) {
+					stream.write(`${password}\n`);
+				} else {
+					outputChannel.append(data.toString())
+				}
+			})
+			.stderr.on('data', (data: any) => {
+				console.log('STDERR: ' + data);
+			});
+			stream.on('exit', function(code: any, signal: any) {
+				connPreview.end();
+			});
 		});
-	  }).connect({
+	}).connect({
 		host: ipAddr,
 		username: username,
-		password: password
-	  });
-	  showMessage(MsgLevel.Info, 'Preview started.')
+		password: password,
+		readyTimeout: 5000,
+	});
+	connPreview.on('error', (err: any) => {
+		showMessage(MsgLevel.Error, 'Connect Error: ' + err)
+	});
 }
 
 export async function stopLogFunction() {
@@ -259,8 +268,8 @@ export async function addFunction() {
 		showMessage(MsgLevel.Error, "Missing some information of Configuration, Please configure again.")
 		return
 	}
-	let indexPath = vscode.Uri.parse(mgr.get_config_path("index.py"))
-	let packagePath = vscode.Uri.parse(mgr.get_config_path("package.json"))
+	let indexPath = vscode.Uri.parse(mgr.get_config_path("index.py", true))
+	let packagePath = vscode.Uri.parse(mgr.get_config_path("package.json", true))
 	let getIndexText = vscode.workspace.openTextDocument(indexPath).then((document) => {
 		return document.getText();
 	  });
@@ -315,8 +324,8 @@ export async function startFunction() {
 		showMessage(MsgLevel.Error, "Missing some information of Configuration, Please configure again.")
 		return
 	}
-	let indexPath = vscode.Uri.parse(mgr.get_config_path("index.py"))
-	let packagePath = vscode.Uri.parse(mgr.get_config_path("package.json"))
+	let indexPath = vscode.Uri.parse(mgr.get_config_path("index.py", true))
+	let packagePath = vscode.Uri.parse(mgr.get_config_path("package.json", true))
 	let getIndexText = vscode.workspace.openTextDocument(indexPath).then((document) => {
 		return document.getText();
 	});
@@ -351,8 +360,8 @@ export async function stopFunction() {
 		showMessage(MsgLevel.Error, "Missing some information of Configuration, Please configure again.")
 		return
 	}
-	let indexPath = vscode.Uri.parse(mgr.get_config_path("index.py"))
-	let packagePath = vscode.Uri.parse(mgr.get_config_path("package.json"))
+	let indexPath = vscode.Uri.parse(mgr.get_config_path("index.py", true))
+	let packagePath = vscode.Uri.parse(mgr.get_config_path("package.json", true))
 	let getIndexText = vscode.workspace.openTextDocument(indexPath).then((document) => {
 		return document.getText();
 	  });

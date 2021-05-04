@@ -28,8 +28,9 @@ export class ConfigManager {
         };
     }
     public async initialization(): Promise<boolean> {
-        this.config_path = this.get_config_path('.tpfunc');
-        if (this.config_path == "") {
+        this.config_path = this.get_config_path('.tpfunc', false);
+        if (!fs.existsSync(this.config_path)) {
+            this.config.init = this.__config_default()
             return false
         }
         let config_uri = vscode.Uri.parse(this.config_path)
@@ -43,11 +44,20 @@ export class ConfigManager {
         this.config = await generate
         return true
     }
+
+    public create_file(_path: string): boolean {
+        if (_path != "" && !fs.existsSync(_path)) {
+            if (fs.openSync(_path, 'as') < 0) {
+                return false
+            }
+        }
+        return true
+    }
     
-    public get_config_path(name: string): string {
+    public get_config_path(name: string, auto_create: boolean): string {
         let cpath = this.__rootPath() != "" ? path.join(this.__rootPath(), name) : ""
-        if (cpath != "" && !fs.existsSync(cpath)) {
-            fs.openSync(cpath, 'as')
+        if (auto_create && !this.create_file(cpath)) {
+            throw "file create exception: " + cpath
         }
         return cpath
     };
@@ -61,7 +71,9 @@ export class ConfigManager {
     }
 
     public write_to_file() {
-        let dump = TOML.stringify(this.config)
-        fs.writeFileSync(this.config_path, dump, 'utf8');
+        if (this.create_file(this.config_path)) {
+            let dump = TOML.stringify(this.config)
+            fs.writeFileSync(this.config_path, dump, 'utf8');
+        }
     }
 };
