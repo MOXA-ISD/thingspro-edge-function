@@ -4,6 +4,10 @@ Function as a service is a built-in feature of ThingsPro Edge which runs user pr
 
 ThingsPro team aware more users are getting used to develop their application by microsoft vscode instead directly login to device (including ourselves). In order to facility those developers, the extension for ThingsPro Edge Function has been uploaded to the marketplace!. You can install the latest version on vscode IDE or from the main page.
 
+## Release Note
+
+Please refer to [Changelog page](https://github.com/MOXA-ISD/tpe-function-extension/blob/main/CHANGELOG.md).
+
 ## Templates of Function
 
 Some templates of ThingsPro Edge Function are available on [GitHub](https://github.com/MOXA-ISD/tpe-function-extension). Including:
