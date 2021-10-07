@@ -8,6 +8,12 @@ ThingsPro team aware more users are getting used to develop their application by
 
 Please refer to [Changelog page](https://github.com/MOXA-ISD/tpe-function-extension/blob/main/CHANGELOG.md).
 
+## SDK
+
+| Platform | Package | Doc Site |
+| :-------:| :------ | :------- |
+| Python | [tpfunc](https://pypi.org/project/tpfunc/) | [https://thingspro-edge-tpfunc-doc.netlify.app/](https://thingspro-edge-tpfunc-doc.netlify.app/) |
+
 ## Templates of Function
 
 Some templates of ThingsPro Edge Function are available on [GitHub](https://github.com/MOXA-ISD/tpe-function-extension). Including:
